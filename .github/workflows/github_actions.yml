@@ -1,0 +1,51 @@
+name: C# Build and Test
+
+on:
+  push:
+    branches:
+      - master  # Adjust the branch name as needed
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # Choose the appropriate runner
+
+    steps:
+      - name: Delete Old Repository
+        run: |
+          rm -rf RestSharp_NUnit_with_VSCode || true
+          echo "Deleted existing repository"
+
+      - name: Create Directory
+        run: |
+          mkdir RestSharp_NUnit_with_VSCode || true
+          echo "Created directory 'RestSharp_NUnit_with_VSCode'"
+
+      - name: Clone Repository
+        run: |
+          git clone https://github.com/AhadMKhan/RestSharp_NUnit_with_VSCode.git RestSharp_NUnit_with_VSCode
+          echo "Cloned repository successfully"
+
+      - name: Solution Building and Executing
+        run: |
+          cd RestSharp_NUnit_with_VSCode
+          # Build your C# project
+          dotnet build
+
+          # Check if the build was successful
+          if [ $? -eq 0 ]; then
+            echo 'Build succeeded'
+            
+            # Run your tests
+            dotnet test
+
+            # Check if the test execution was successful
+            if [ $? -eq 0 ]; then
+              echo 'Test Execution succeeded'
+            else
+              echo 'Test Execution failed'
+              exit 1
+            fi
+          else
+            echo 'Build failed'
+            exit 1
+          fi
